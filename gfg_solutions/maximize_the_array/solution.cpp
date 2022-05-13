@@ -1,19 +1,22 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <unordered_map>
 using namespace std;
 
 vector<int> maximizeArray(int arr1[], int arr2[], int n) {
 
     priority_queue <int> PQ1, PQ2;
+    vector <bool> valid1,valid2;
+    unordered_map <int,int> indx1,indx2;
 
-    for(int i{} ; i < n ; i++)
+    for(int i{n-1} ; i >= 0 ; i--)
     {
+        indx1[arr1[i]] = i;
+        indx2[arr2[i]] = i;
         PQ1.push(arr1[i]);
         PQ2.push(arr2[i]);
     }
-
-    vector <int> v1,v2;
 
     for(int i{} ; i < n ; i++)
     {
@@ -21,7 +24,8 @@ vector<int> maximizeArray(int arr1[], int arr2[], int n) {
         {
             if(PQ1.top() > PQ2.top())
             {
-                v1.push_back(PQ1.top());
+                int index = indx1[PQ1.top()];
+                valid1[index] = true;
                 int temp = PQ1.top();
 
                 while(PQ1.top() == temp)
@@ -29,7 +33,8 @@ vector<int> maximizeArray(int arr1[], int arr2[], int n) {
             }
             else
             {
-                v2.push_back(PQ2.top());
+                int index = indx2[PQ2.top()];
+                valid2[index] = true;
                 int temp = PQ2.top();
 
                 while(PQ2.top() == temp)
@@ -38,9 +43,9 @@ vector<int> maximizeArray(int arr1[], int arr2[], int n) {
         }
         else
         {
-            int temp = PQ1.top();
-
-            v2.push_back(temp);
+            int temp = PQ2.top();
+            int index = indx2[PQ2.top()];
+            valid2[index] = true;
             while(PQ1.top() == temp)
                 PQ1.pop();
             while(PQ2.top() == temp)
@@ -49,12 +54,20 @@ vector<int> maximizeArray(int arr1[], int arr2[], int n) {
         }
     }
 
-    for(int i{} ; i < (int)v1.size() ; i++)
+    vector <int> result;
+
+    for(int i{} ; i < n ; i++)
     {
-        v2.push_back(v1[i]);
+        if(valid2[i])
+            result.push_back(arr2[i]);
+    }
+    for(int i{} ; i < n ; i++)
+    {
+        if(valid1[i])
+            result.push_back(arr1[i]);
     }
 
-    return v1;
+    return result;
 }
 
 int main()
