@@ -15,6 +15,8 @@ vector<int> maximizeArray(int arr1[], int arr2[], int n) {
         indx1[arr1[i]] = i;
         indx2[arr2[i]] = i;
         PQ1.push(arr1[i]);
+        valid1.push_back(false);
+        valid2.push_back(false);
         PQ2.push(arr2[i]);
     }
 
