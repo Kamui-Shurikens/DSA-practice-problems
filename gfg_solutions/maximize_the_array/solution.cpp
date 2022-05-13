@@ -1,12 +1,12 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <algorithm>
 #include <unordered_map>
 using namespace std;
 
 vector<int> maximizeArray(int arr1[], int arr2[], int n) {
 
-    priority_queue <int> PQ1, PQ2;
+    vector <int> PQ1, PQ2;
     vector <bool> valid1,valid2;
     unordered_map <int,int> indx1,indx2;
 
@@ -14,45 +14,52 @@ vector<int> maximizeArray(int arr1[], int arr2[], int n) {
     {
         indx1[arr1[i]] = i;
         indx2[arr2[i]] = i;
-        PQ1.push(arr1[i]);
+        PQ1.push_back(arr1[i]);
         valid1.push_back(false);
         valid2.push_back(false);
-        PQ2.push(arr2[i]);
+        PQ2.push_back(arr2[i]);
     }
+
+    sort(PQ1.begin(),PQ1.end(),greater<int>());
+    sort(PQ2.begin(),PQ2.end(),greater<int>());
+    PQ1.push_back(INT_MIN);
+    PQ2.push_back(INT_MIN);
+    PQ1.push_back(INT_MIN);
+    PQ2.push_back(INT_MIN);
+
+    int p1{},p2{};
 
     for(int i{} ; i < n ; i++)
     {
-        if(PQ1.top() != PQ2.top())
+        if(PQ1[p1] != PQ2[p2])
         {
-            if(PQ1.top() > PQ2.top())
+            if(PQ1[p1] > PQ2[p2])
             {
-                int index = indx1[PQ1.top()];
+                int index = indx1[PQ1[p1]];
                 valid1[index] = true;
-                int temp = PQ1.top();
-
-                while(PQ1.top() == temp)
-                    PQ1.pop();
+                int temp = PQ1[p1];
+                while(PQ1[p1] == temp)
+                    p1++;
             }
             else
             {
-                int index = indx2[PQ2.top()];
+                int index = indx2[PQ2[p2]];
                 valid2[index] = true;
-                int temp = PQ2.top();
-
-                while(PQ2.top() == temp)
-                    PQ2.pop();
+                int temp = PQ2[p2];
+                while(PQ2[p2] == temp)
+                    p2++;
             }
         }
         else
         {
-            int temp = PQ2.top();
-            int index = indx2[PQ2.top()];
+            int index = indx2[PQ2[p2]];
             valid2[index] = true;
-            while(PQ1.top() == temp)
-                PQ1.pop();
-            while(PQ2.top() == temp)
-                PQ2.pop();
+            int temp = PQ2[p2];
 
+            while(PQ1[p1] == temp)
+                p1++;
+            while(PQ2[p2] == temp)
+                p2++;
         }
     }
 
